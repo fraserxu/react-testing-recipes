@@ -60,14 +60,27 @@ Make sure you always import `React` to let the test runner know you have JSX syn
 
 ```JavaScript
 import React from 'react'
-import { shallow } from 'enzyme'
 import test from 'tape'
+import { shallow } from 'enzyme'
+
+const DummyComponent = (props) => <div>{props.content}</div>
 
 test('Dummy component', assert => {
   const msg = 'should render dummy content'
 
-  const expected
-})
+  const expected = '<div>dummy content</div>'
+  
+  const props = {
+    content: 'dummy content'
+  }
+
+  const $ = shallow(<DummyComponent {...props} />)
+  const output = $.html()
+
+  assert.equal(output, expected, msg)
+
+  assert.end()
+}))
 ```
 
 ### License
