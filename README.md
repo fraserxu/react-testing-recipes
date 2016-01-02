@@ -154,7 +154,7 @@ import sinon from 'sinon'
 // ...
 
 // we spy on the `handleMouseDown` function
-const handleMosueDown = sinon.spy()
+const handleMouseDown = sinon.spy()
 const props = {
   user: {
     name: 'fraserxu',
@@ -172,7 +172,7 @@ listItem.simulate('mouseDown')
 const actual = handleMouseDown.calledOnce
 const expected = true
 
-assert.equal(acutal, expected, msg)
+assert.equal(actual, expected, msg)
 assert.end()
 ```
 
