@@ -8,6 +8,21 @@ Part of the code and ideas are borrowed from **React Testing Cookbook** series o
 Setup
 -----
 
+Install babel 6 preset family
+
+```
+npm i babel-preset-es2015 babel-preset-react babel-preset-stage-0 babel-core babel-cli --save-dev
+```
+
+Add `.babelrc`
+
+```JSON
+{
+  "presets": ["es2015", "stage-0", "react"]
+}
+
+```
+
 Install testing dependencies
 
 ```
@@ -35,8 +50,8 @@ In order to make standard understand your `ES6` code and `JSX` syntax, you may a
   }
 }
 ```
-* standard - :star2: JavaScript Standard Style http://standardjs.com
-* snazzy - Format JavaScript Standard Style as Stylish (i.e. snazzy) output
+* **standard** - :star2: JavaScript Standard Style http://standardjs.com
+* **snazzy** - Format JavaScript Standard Style as Stylish (i.e. snazzy) output
 
 Add `scripts` to `package.json`
 
@@ -110,6 +125,8 @@ assert.equal($.find('.childClass').children().length, expected, msg)
 ```
 #### Emulate mouse event
 
+First we prepare a simple React `ListComponent` class, the list item will take a `handleMouseDown` callback function from props.
+
 ```JavaScript
 // ListComponent
 class ListComponent extends React.Component {
@@ -128,12 +145,15 @@ class ListComponent extends React.Component {
 export default ListComponent
 ```
 
+Than we can start to test it.
+
 ```JavaScript
 import ListComponent from './ListComponent'
 import sinon from 'sinon'
 
 // ...
 
+// we spy on the `handleMouseDown` function
 const handleMosueDown = sinon.spy()
 const props = {
   user: {
@@ -145,7 +165,10 @@ const props = {
 const $ = shallow(<ListComponent {...props} />)
 const listItem = $.find('li')
 
+// emulate the `mouseDown` event
 listItem.simulate('mouseDown')
+
+// check if the function get called
 const actual = handleMouseDown.calledOnce
 const expected = true
 
@@ -154,6 +177,8 @@ assert.end()
 ```
 
 #### Test custom data-attribute
+
+First we prepare a simple React `ListComponent` class, the list item will have a custom data attribute `data-selected` from props.
 
 ```JavaScript
 // ListComponent
@@ -173,6 +198,8 @@ class ListComponent extends React.Component {
 export default ListComponent
 ```
 
+This part is a little tricky. As for normal DOM node, we can [access the data attribute](https://developer.mozilla.org/en/docs/Web/Guide/HTML/Using_data_attributes) with `$.node.dataset.isSelected`, I tried to get the data attribute for a while and the only solution I found is `listItemNode.getAttribute('data-selected')`.
+
 ```JavaScript
 import ListComponent from './ListComponent'
 
@@ -190,9 +217,25 @@ const props = {
 const $ = shallow(<ListComponent {...props} />)
 const listItem = $.find('li').node
 
+// here is the trick part
 assert.equal(listItemNode.getAttribute('data-selected'), 'true', msg)
 assert.end()
 ```
+
+Roadmap
+---------
+
+This is just the beginning of this recipes and is quite limited to the bacis of testing React code. I'll add more along working and learning. If you are interestd to contribue or want to know how to test certain code, send a pull request here or open a Github issue.
+
+Happy testing!
+
+Further readings
+---------------
+
+* [Why I use Tape Instead of Mocha & So Should You](https://medium.com/javascript-scene/why-i-use-tape-instead-of-mocha-so-should-you-6aa105d8eaf4)
+* [A pure component dev starter kit for React.](https://github.com/ericelliott/react-pure-component-starter)
+
+Special thanks to [@ericelliott](https://github.com/ericelliott) for sharing his knowledge and effort to make our life easier writing JavaScript.
 
 ### License
 MIT
