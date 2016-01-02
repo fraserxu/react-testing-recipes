@@ -1,14 +1,17 @@
-# react-testing-recipes
+react-testing-recipes
+=====================
+
 A list of recipes to testing your React code
 
 Part of the code and ideas are borrowed from **React Testing Cookbook** series on [egghead.io](https://egghead.io) with awareness of personal choice of tools.
 
-### Setup
+Setup
+-----
 
 Install testing dependencies
 
 ```
-$ npm i tape enzyme react-addons-test-utils babel-tape-runner faucet --save-dev
+$ npm i tape sinon enzyme react-addons-test-utils babel-tape-runner faucet --save-dev
 $ npm i react react-dom --save
 ```
 * **tape** - tap-producing test harness for node and browsers
@@ -16,6 +19,7 @@ $ npm i react react-dom --save
 * **react-addons-test-utils** - ReactTestUtils makes it easy to test React components in the testing framework of your choice
 * **babel-tape-runner** - Babel + Tape runner for your ESNext code
 * **faucet** - human-readable TAP summarizer
+* **sinon** - Standalone test spies, stubs and mocks for JavaScript.
 
 Lint your ES6 and React code with [standard](https://github.com/feross/standard) and better test error message with snazzy.
 
@@ -46,13 +50,16 @@ Add `scripts` to `package.json`
 }
 ```
 
-### Running test
+Running test
+------------
 
-You can start lint with `npm run lint` and running tests with `npm test`, `lint` is part of the test as we defined in `pretest`.
+* You can start lint with `npm run lint`
+* Running tests with `npm test`, `lint` is part of the test as we defined in `pretest`.
 
-### What to test
+What to test
+----------------
 
-##### Shallow Rendering
+#### Shallow Rendering
 
 > Shallow rendering is useful to constrain yourself to testing a component as a unit, and to ensure that your tests aren't indirectly asserting on behavior of child components.
 
@@ -69,7 +76,7 @@ test('Dummy component', assert => {
   const msg = 'should render dummy content'
 
   const expected = '<div>dummy content</div>'
-  
+
   const props = {
     content: 'dummy content'
   }
@@ -81,6 +88,110 @@ test('Dummy component', assert => {
 
   assert.end()
 }))
+```
+
+#### Check a component has certain className
+
+```JavaScript
+assert.true($.hasClass('myClassName'), msg)
+```
+
+#### Check a DOM node exist
+
+```JavaScript
+assert.true($.find('.someDOMNode').length, msg)
+```
+
+#### Check a component has child element
+
+```JavaScript
+const expected = props.data.length
+assert.equal($.find('.childClass').children().length, expected, msg)
+```
+#### Emulate mouse event
+
+```JavaScript
+// ListComponent
+class ListComponent extends React.Component {
+  constructor (props) {
+    super(props)
+  }
+
+  render () {
+    const { user, handleMouseDown } = this.props
+    return (
+      <li onMouseDown={handleMouseDown}>{user.name}</li>
+    )
+  }
+}
+
+export default ListComponent
+```
+
+```JavaScript
+import ListComponent from './ListComponent'
+import sinon from 'sinon'
+
+// ...
+
+const handleMosueDown = sinon.spy()
+const props = {
+  user: {
+    name: 'fraserxu',
+    title: 'Frontend Developer'
+  },
+  handleMouseDown
+}
+const $ = shallow(<ListComponent {...props} />)
+const listItem = $.find('li')
+
+listItem.simulate('mouseDown')
+const actual = handleMouseDown.calledOnce
+const expected = true
+
+assert.equal(acutal, expected, msg)
+assert.end()
+```
+
+#### Test custom data-attribute
+
+```JavaScript
+// ListComponent
+class ListComponent extends React.Component {
+  constructor (props) {
+    super(props)
+  }
+
+  render () {
+    const { user, handleMouseDown, isSelected } = this.props
+    return (
+      <li onMouseDown={handleMouseDown} data-selected={isSelected}>>{user.name}</li>
+    )
+  }
+}
+
+export default ListComponent
+```
+
+```JavaScript
+import ListComponent from './ListComponent'
+
+// ...
+
+const noop = () => {}
+const props = {
+  user: {
+    name: 'fraserxu',
+    title: 'Frontend Developer'
+  },
+  handleMouseDown: noop,
+  isSelected: true
+}
+const $ = shallow(<ListComponent {...props} />)
+const listItem = $.find('li').node
+
+assert.equal(listItemNode.getAttribute('data-selected'), 'true', msg)
+assert.end()
 ```
 
 ### License
