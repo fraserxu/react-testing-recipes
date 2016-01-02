@@ -222,6 +222,25 @@ assert.equal(listItemNode.getAttribute('data-selected'), 'true', msg)
 assert.end()
 ```
 
+#### Test JSX equal with `tape-jsx-equals`
+
+Same as [expect-jsx](https://github.com/algolia/expect-jsx), you can use [tape-jsx](https://www.npmjs.com/package/tape-jsx-equals) to test JSX strings.
+
+```
+$ npm install --save-dev extend-tape
+$ npm install --save-dev tape-jsx-equals
+```
+
+```JavaScript
+import tape from 'tape'
+import addAssertions from 'extend-tape'
+import jsxEquals from 'tape-jsx-equals'
+
+const test = addAssertions(tape, {jsxEquals})
+
+assert.jsxEquals(result, <div className='box color-red'></div>)
+```
+
 Roadmap
 ---------
 
