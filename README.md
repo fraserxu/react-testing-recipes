@@ -121,6 +121,29 @@ jsdom.env('<!doctype html><html><body></body></html>', {
 })
 ```
 
+#### Test component life cycle
+
+```JavaScript
+import { spyLifecycle } from 'enzyme'
+
+// This part inject document and window variable for the DOM mount test
+const doc = jsdom.jsdom('<!doctype html><html><body></body></html>')
+const win = doc.defaultView
+global.document = doc
+global.window = win
+
+spyLifecycle(AutosuggestKeyBinderComponent)
+
+let container = doc.createElement('div')
+render(<AutosuggestKeyBinderComponent {...props} />, container)
+
+assert.true(AutosuggestKeyBinderComponent.prototype.componentDidMount.calledOnce, 'calls componentDidMount once')
+
+unmountComponentAtNode(container)
+
+assert.true(AutosuggestKeyBinderComponent.prototype.componentWillUnmount.calledOnce, 'calls componentWillUnmount once')
+```
+
 #### Check a component has certain className
 
 ```JavaScript
