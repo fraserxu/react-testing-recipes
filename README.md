@@ -121,6 +121,32 @@ jsdom.env('<!doctype html><html><body></body></html>', {
 })
 ```
 
+#### To run your test in the browser with [tape-run](https://github.com/juliangruber/tape-run)
+
+A lot of times your test may dependes heavily on the browser and mocking them with jsdom could be troublesome or even impossible. A better solution is to pipe the testing code into the browser, so we could have access to browser only variables like `document`, `window`.
+
+```JavaScript
+import test from 'tape'
+import React from 'react'
+import jQuery from 'jquery'
+import { render } from 'react-dom'
+
+test('should have a proper testing environment', assert => {
+  jQuery('body').append('<input>')
+  const $searchInput = jQuery('input')
+
+  assert.true($searchInput instanceof jQuery, '$searchInput is an instanceof jQuery')
+
+  assert.end()
+})
+```
+
+And we can run the test with `browserify dummyComponent.browser.test.js -t [ babelify --presets [ es2015 stage-0 react ] ] | tape-run`
+
+The benefit of this approach is that we don't need to mock anything at all. But there are also downsides of this, first thing is that currently it does not work with `enzyme` as it will complain "Cannot find module 'react/lib/ReactContext'". There are also a [github issue here](https://github.com/airbnb/enzyme/issues/47).
+
+Secondly, since `tape-run` will need to launch an electron application, I'm not sure the performance yet compare to `js-dom`. But it really makes the test running in a browser environment easy.
+
 #### Test component life cycle
 
 ```JavaScript
