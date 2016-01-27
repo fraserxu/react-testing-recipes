@@ -147,6 +147,8 @@ The benefit of this approach is that we don't need to mock anything at all. But 
 
 Secondly, since `tape-run` will need to launch an electron application, I'm not sure the performance yet compare to `js-dom`. But it really makes the test running in a browser environment easy.
 
+**Notes:** You [need some work to be done](https://github.com/juliangruber/tape-run/issues/32) to make <del>tape-run</del>(electron) work on Linux.
+
 #### Test component life cycle
 
 ```JavaScript
